@@ -1,0 +1,10 @@
+<div class="container" *ngIf="arrayListAnCont.length > 0">
+    <h2>Lista de analizadores Realizados</h2>
+    <ul class="list-group">
+        <!--<li *ngFor = 'let info of listaAnalizadores' class="list-group-item">{{info}}</li>-->
+        <button *ngFor = 'let info of arrayListAnCont' type="button" class="btn btn-outline-primary" (click)="mostrarText(info.id)">{{info.id}}</button>        
+        <div *ngIf='mostrarCont' class="alert alert-primary">
+            {{contMostar}}
+        </div>
+    </ul>    
+</div>

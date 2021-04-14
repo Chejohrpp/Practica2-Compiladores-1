@@ -1,0 +1,17 @@
+<div class="container">
+    <h2>Escriba su gramatica aqui</h2>
+    <form #getTexto="ngForm" (ngSubmit)="recibirTexto(getTexto)">
+        <input type="file">
+        <pre></pre>
+        <!--<textarea class="form-control" id="exampleFormControlTextarea1" rows="10" name="txt" ></textarea>-->
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="22" wrap="off" name="txt" [(ngModel)]="expr"></textarea>
+        <pre></pre>
+        <div *ngIf="listaErrores.length > 0" class="alert alert-danger" role="alert">
+            <p>Errores en la gramatica</p>
+            <p *ngFor = 'let info of listaErrores'>{{info}}</p>
+        </div> 
+        <input type="submit" class="btn btn-primary" value="Enviar gramatica">
+    </form>
+  
+</div>
+
