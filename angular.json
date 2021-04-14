@@ -13,6 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": ["source-map-generator.js", "source-map-consumer.js","source-node.js"],
             "outputPath": "dist/practica2-compi1",
             "index": "src/index.html",
             "main": "src/main.ts",

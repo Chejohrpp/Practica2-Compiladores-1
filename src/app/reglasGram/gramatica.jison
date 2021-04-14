@@ -13,6 +13,8 @@
 \s+                   /* skip whitespace */
 "#"[^\n]*             /*NO hacer nada*/
 "/**"([^*]+|\*+[^/*]+)*"*"+"/"  /*No hacer Nada*/
+"aA-zZ"                      return 'EXP_REG_ABC';
+"0-9"                      return 'EXP_REG_NUM';
 "$_"("_"+|[a-zA-Z]+|[0-9]+)* return 'NOMBRE_TERMINAL';
 "%_"("_"+|[a-zA-Z]+|[0-9]+)* return 'NOMBRE_PRODUCCION';
 [0-9]+                return 'ENTERO';
@@ -58,6 +60,7 @@
     var arrayTerminales = [];
     var arrayProducciones = [];
     var arrayNoTerminales = [];
+    var arrayDerivaciones = [];
     var symInicial;
 %}
 
@@ -67,10 +70,21 @@ inicio
     :  WISON inicio_sig EOF 
         {
             var elemento = {'id':'listaErrores','cont':arrayErrores};
+            var elemento1 = {'id':'listaTerminales','cont':arrayTerminales};
+            var elemento2 = {'id':'listaProducciones','cont':arrayProducciones};
+            var elemento3 = {'id':'listaNoTerminales','cont':arrayNoTerminales};
+            var elemento4 = {'id':'symInicial','cont':symInicial};
             array.push(elemento);
+            array.push(elemento1);
+            array.push(elemento2);
+            array.push(elemento3);
+            array.push(elemento4);
             var arrayAux = array;
             array = []; 
-            arrayErrores = [];             
+            arrayErrores = [];         
+            arrayTerminales = [];
+            arrayProducciones = [];
+            arrayNoTerminales = [];
             return arrayAux;
         }    
     ;
@@ -123,108 +137,121 @@ cont_lex
 only_terminal
     : TERMINAL NOMBRE_TERMINAL '<' '-' expresion_lex ';'
         {
-
+            var elemento = {'id': $2 ,'cont':$5};
+            arrayTerminales.push(elemento);
+        }
+    |error
+        {
+            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
     ;
 
 expresion_lex
     : COMILLA cont_expresion_lex COMILLA
         {
-
+            $$ = $2;
         }
     | cont_expr_regulares
         {
-
+            $$ = $1;
+        }
+    |error
+        {
+            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
     ;
 
 cont_expresion_lex
     : STRING
         {
-          
+          $$ = yytext;
         }
     | INVALID
         {
-          
+          $$ = '\\' + '\\' + yytext;
         }
     | symb_especiales
         {
-           
+           $$ = $1;
         }
     ;
 
 symb_especiales
     : '*'
         {
-          
+          $$ = '\\' + '\\' + yytext;
         }
     | '='
         {
-            
+            $$ = '\\' + '\\' + yytext;
         }
     | '-'
         {
-            
+            $$ = '\\' + '\\'+ yytext;
         }
     | '<'
         {
-            
+            $$ = '\\' + '\\'+ yytext;
         }
     | '{'
         {
-            
+            $$ = '\\' + '\\'+ yytext;
         }
     | '}'
         {
-            
+            $$ = '\\' + '\\'+ yytext;
         }
     | '+'
         {
-            
+            $$ = '\\' + '\\'+ yytext;
         }
     | '%'
         {
-            
+            $$ = '\\' + '\\'+ yytext;
         }
     | '('
         {
-            
+            $$ = '\\' + '\\'+ yytext;
         }
     | ')'
         {
-            
+            $$ = '\\' + '\\'+ yytext;
         }
     | '['
         {
-            
+            $$ = '\\' + '\\'+ yytext;
         }
     | ']'
         {
-             
+             $$ = '\\' + '\\'+ yytext;
         }
     | ';'
         {
-            
+            $$ = '\\' + '\\' +yytext;
         }
     | '?'
         {
-           
+           $$ = '\\' + '\\'+ yytext;
         }
     | '¿'
         {
-            
+            $$ = '\\' + '\\'+ yytext;
         }
     | ':'
         {
-            
+            $$ = '\\' + '\\'+ yytext;
         }
     | COMILLA
         {
-            
+            $$ = '\\' + '\\'+ yytext;
         }
     | '|'
         {
-             
+             $$ = '\\' + '\\' +yytext;
         }
     ;
 
@@ -232,77 +259,95 @@ symb_especiales
 cont_expr_regulares
     : '[' param_cont_expr_regulares sig_cont_expr_regulares
         {
-
+            $$ = '[' + $2 + $3 ;
         }
     | cont_expr_regulares_combinado
         {
-
+            $$ = $1;
         } 
     ;
 
 cont_expr_regulares_combinado
     : cont_expr_regulares_combinado expr_reg_comb
         {
-
+            $$ = $1 + $2;
         }
     | expr_reg_comb
         {
-
+            $$ = $1;
         }
     ;
 
 expr_reg_comb
     : '(' cont_expr_reg_comb ')'
         {
-
+            $$ = '(' + $2 + ')';
         }
     ;
 
 cont_expr_reg_comb
     : cont_expr_regulares
         {
-
+            $$ = $1;
         }
     | NOMBRE_TERMINAL
         {
-
+            $$ = yytext;
+        }
+    |error
+        {
+            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
     ;
 
 param_cont_expr_regulares
-    : STRING '-' STRING
+    : EXP_REG_ABC 
         {
-
+            $$ = 'a-zA-Z';
         }
-    | ENTERO '-' ENTERO
+    | EXP_REG_NUM
         {
-
+            $$ = yytext;
+        }
+    |error
+        {
+            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
     ;
 
 sig_cont_expr_regulares
     : ']'
         {
-
+            $$ = yytext;
         }
     | ']' clausula_expr
         {
-
+            $$ = ']' + $2;
+        }
+    |error
+        {
+            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
     ;
 
 clausula_expr
     : '*'
         {
-
+            $$ = yytext;
         }
     | '+'
         {
-
+            $$ = yytext;
         }
     | '?'
         {
-
+            $$ = yytext;
         }
     ;
 
@@ -335,19 +380,31 @@ no_terminales
         {
 
         }
+    |error
+        {
+            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
+        }
     ;
 
 no_terminal 
     : NO_TERMINAL NOMBRE_PRODUCCION ';'
         {
-
+            arrayNoTerminales.push($2);
         }
     ;
 
 initial_prod
     : INITIAL_SYM NOMBRE_PRODUCCION ';'
         {
-
+            symInicial = $2;
+        }
+    |error
+        {
+            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
     ;
 
@@ -362,42 +419,53 @@ producciones
         }
     ;
 produccion
-    : NOMBRE_PRODUCCION '<' '=' cont_derivaciones ';'
+    : NOMBRE_PRODUCCION '<' '=' derivaciones ';'
         {
-
+            var produccion = $4;
+            var elemento = {'id': $1, 'cont': arrayDerivaciones };
+            arrayProducciones.push(elemento);
+            arrayDerivaciones = [];
+        }
+    |error
+        {
+            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
     ;
-
-cont_derivaciones
-    : cont_derivaciones '|' derivaciones
-        {
-
-        }
-    | derivaciones
-        {
-            
-        }
-    ;
-
 
 derivaciones
     : derivaciones derivacion
         {
-
+            $$ = $1 + $2
         }
     |derivacion
         {
-
+            $$ = $1;
+        }
+    |error
+        {
+            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
     ;
 
 derivacion
     : NOMBRE_PRODUCCION
         {
-
+            arrayDerivaciones.push(yytext);
+            $$ = yytext;
         }
     | NOMBRE_TERMINAL
         {
+            arrayDerivaciones.push(yytext);
+            $$ = yytext;
+        }
+    | '|'
+        {
+            arrayDerivaciones.push(yytext);
+            $$ = yytext;
 
         }
     ;

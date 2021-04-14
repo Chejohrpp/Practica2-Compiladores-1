@@ -1,0 +1,16 @@
+<div class="container">
+    <h2>Ingrese su entrada de texto Aqui: </h2>
+    <label>Gramatica Actual: {{nombreGramatica}}</label>
+    <form #entrada="ngForm" (submit)="analizarTexto(entrada)">
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="5" wrap="off" name="txtEntrada" ngModel></textarea>
+        <pre></pre>
+        <div *ngIf="listaErrores.length > 0" class="alert alert-danger" role="alert">
+            <p>Errorres en la entrada: </p>
+            <p *ngFor = 'let info of listaErrores'>{{info}}</p>
+        </div>
+        <div *ngIf="listaErrores.length == 0 && entradaTrue" class="alert alert-success" role="alert">
+            <p>Entrada Aceptable</p>
+        </div>
+        <input class="btn btn-primary" type="submit" value="Analizar">
+    </form>
+</div>

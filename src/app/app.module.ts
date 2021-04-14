@@ -7,13 +7,15 @@ import { AppComponent } from './app.component';
 import { EditorTextoComponent } from './editor-texto/editor-texto.component';
 import { AnalizadoresGeneradosComponent } from './analizadores-generados/analizadores-generados.component';
 import { ImgArbolComponent } from './img-arbol/img-arbol.component';
+import { EntradaTextoComponent } from './entrada-texto/entrada-texto.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     EditorTextoComponent,
     AnalizadoresGeneradosComponent,
-    ImgArbolComponent
+    ImgArbolComponent,
+    EntradaTextoComponent
   ],
   imports: [
     BrowserModule,

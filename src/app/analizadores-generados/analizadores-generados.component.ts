@@ -15,11 +15,15 @@ export class AnalizadoresGeneradosComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  arrayListAnCont: {'id':String, 'cont':String}[] = this._app.arrayListAnCont
+  arrayListAnCont: {'id':String, 'cont':String, 'gramatica': any}[] = this._app.arrayListAnCont
   mostrarCont:boolean = false;
   contMostar:String;
 
   mostrarText(id:String){
+    const el = this.arrayListAnCont.find(x=>x.id == id);
+    this._app.gramaticaActual = el.gramatica;
+    this._app.nameGramActual = el.id;
+    this._app.activarEntradaTxt = true;
     if (this.mostrarCont) {
       this.mostrarCont =false
     }else{

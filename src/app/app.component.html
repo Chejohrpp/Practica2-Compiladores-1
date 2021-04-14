@@ -7,6 +7,10 @@
         <div class="row">
             <app-analizadores-generados ></app-analizadores-generados>
           </div>
+        <div *ngIf="activarEntradaTxt" class="row">
+            <pre></pre>
+          <app-entrada-texto></app-entrada-texto>
+        </div>
           <div *ngIf="activarArbol" class="row">
               <pre></pre>
             <app-img-arbol></app-img-arbol>

@@ -7,14 +7,16 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'practica2-compi1';
-  arrayListAnCont: {'id':String, 'cont':String}[] = [];
+  arrayListAnCont: {'id':String, 'cont':String, 'gramatica': any}[] = [];
+  activarEntradaTxt: boolean = false;
+  gramaticaActual:any;
+  nameGramActual: String;
   activarArbol:boolean = false;
   private cont:number = 1;
 
-  addArrayListAn(info:String){
-    let strc = {'id': 'Analizador ' + this.cont , 'cont':info}
+  addArrayListAn(info:String, gramHecha:any){
+    let strc = {'id': 'Analizador ' + this.cont , 'cont':info, 'gramatica' : gramHecha}
     this.arrayListAnCont.push(strc);
     this.cont++
-    this.activarArbol =true
   }
 }
