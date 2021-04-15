@@ -27,9 +27,11 @@ export class EntradaTextoComponent implements OnInit {
     try {
       console.log('Resultado del parser es: ' + parser.parse(texto));
       this.entradaTrue = true;
+      this._app.activarArbol =true;
     } catch (error) {
       this.listaErrores.push(error);
       this.entradaTrue = false;
+      this._app.activarArbol = false;
     }
   }
 
