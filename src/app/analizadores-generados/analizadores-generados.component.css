@@ -6,3 +6,6 @@ button{
     margin-bottom: 0.5rem;
     text-align: left;
 }
+textarea {
+    background-color: transparent !important;
+}

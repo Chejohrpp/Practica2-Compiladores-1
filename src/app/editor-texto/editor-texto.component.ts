@@ -25,8 +25,13 @@ export class EditorTextoComponent  {
 
   recibirTexto(form){
     this.listaErrores = [];
+    this.listaNoTerminales = [];
+    this.listaTerminales = [];
+    this.symInicial = undefined;
+    this.listaProducciones = [];
+    this.array = [];
     try {
-      this.array = this.parser.parse(this.expr);
+      this.array = this.parser.parse(form.value.txt);
     } catch (error) {
       this.listaErrores.push(error) 
     }    
@@ -44,15 +49,18 @@ export class EditorTextoComponent  {
         this.symInicial = element.cont;
       }            
     }
-    this.verificarDatos();
-    if (this.listaErrores.length == 0) {      
-      
+    if (this.listaErrores.length == 0) {
+      this.verificarDatos(); 
+    }
+    if (this.listaErrores.length == 0) { 
       //this.verDatos();
-      this._app.addArrayListAn(this.expr,this.gramaticaEstrucurada());
-    }else{
-      this._app.activarArbol = false;
+      let varGram = this.gramaticaEstrucurada();
+      if (this.listaErrores.length == 0) {
+        this._app.addArrayListAn(form.value.txt,varGram);
+      }      
     }
   }
+
   verDatos(){
     console.log('terminales: ')
     for (let index = 0; index < this.listaTerminales.length; index++) {
@@ -94,7 +102,7 @@ export class EditorTextoComponent  {
     return false;
   }
 
-    verificarProducciones(){
+  verificarProducciones(){
       for (let index = 0; index < this.listaProducciones.length; index++) {
         const element = this.listaProducciones[index];
         let id: String = this.listaNoTerminales.find(x=>x == element.id);
@@ -165,7 +173,13 @@ export class EditorTextoComponent  {
     let gramString = " {\n \"lex\":{\n  \"rules\" : [\n"+omitirEspacios +lexerGramar+"\n]\n},\n\"start\" : \""+this.symInicial+"\",\n \"bnf\":{\n"+producciones+"\n}\n}";
     console.log(gramString);
     let gramObjt = JSON.parse(gramString);
-    console.log(gramObjt);  
+    console.log(gramObjt);
+    try {
+      const Parser = require("jison").Parser;
+      const parser = new Parser(gramObjt);
+    } catch (error) {
+      this.listaErrores.push(error);
+    }
     return gramObjt;    
   }
 }

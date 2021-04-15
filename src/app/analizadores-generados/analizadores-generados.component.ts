@@ -17,24 +17,30 @@ export class AnalizadoresGeneradosComponent implements OnInit {
   }
   arrayListAnCont: {'id':String, 'cont':String, 'gramatica': any}[] = this._app.arrayListAnCont
   mostrarCont:boolean = false;
+  gramActual:String;
   contMostar:String;
 
   mostrarText(id:String){
-    const el = this.arrayListAnCont.find(x=>x.id == id);
-    this._app.gramaticaActual = el.gramatica;
-    this._app.nameGramActual = el.id;
-    this._app.activarEntradaTxt = true;
     if (this.mostrarCont) {
       this.mostrarCont =false
     }else{
-      for (let index = 0; index < this.arrayListAnCont.length; index++) {
+      const el = this.arrayListAnCont.find(x=>x.id == id);
+      this.contMostar = el.cont;
+      this.mostrarCont =true;
+      /*for (let index = 0; index < this.arrayListAnCont.length; index++) {
         const element = this.arrayListAnCont[index];
         if (element.id == id) {
           this.contMostar = element.cont
           this.mostrarCont = true
         }      
-      }
+      }*/
     }        
+  }
+  cambiarGram(id:String){
+    const el = this.arrayListAnCont.find(x=>x.id == id);
+    this._app.gramaticaActual = el.gramatica;
+    this.gramActual = el.id;
+    this._app.activarEntradaTxt = true;
   }
 
 }

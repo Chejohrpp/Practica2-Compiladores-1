@@ -16,12 +16,10 @@ export class EntradaTextoComponent implements OnInit {
   }
   listaErrores: String[] =[];
   gramatica:any = this._app.gramaticaActual;
-  nombreGramatica:String = this._app.nameGramActual;
   entradaTrue:boolean = false;
 
   analizarTexto(form){
   this.gramatica = this._app.gramaticaActual;
-  this.nombreGramatica = this._app.nameGramActual;
     this.listaErrores = [];
     const texto = form.value.txtEntrada;
     const Parser = require("jison").Parser;

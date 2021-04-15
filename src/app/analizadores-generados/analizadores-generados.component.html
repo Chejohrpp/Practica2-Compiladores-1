@@ -2,9 +2,17 @@
     <h2>Lista de analizadores Realizados</h2>
     <ul class="list-group">
         <!--<li *ngFor = 'let info of listaAnalizadores' class="list-group-item">{{info}}</li>-->
-        <button *ngFor = 'let info of arrayListAnCont' type="button" class="btn btn-outline-primary" (click)="mostrarText(info.id)">{{info.id}}</button>        
-        <div *ngIf='mostrarCont' class="alert alert-primary">
-            {{contMostar}}
+        <div class="row" *ngFor = 'let info of arrayListAnCont'>
+            <div class="col">
+                <button type="button" class="btn btn-outline-primary" (click)="cambiarGram(info.id)">{{info.id}}</button>
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-outline-primary" (click)="mostrarText(info.id)">Mostrar Contenido</button>                
+            </div>
         </div>
-    </ul>    
+         <div *ngIf='mostrarCont' class="alert alert-primary">
+             <textarea readonly wrap="off" rows="10" class="form-control" id="exampleFormControlTextarea1">{{contMostar}}</textarea>            
+        </div>
+    </ul>
+    <label *ngIf="gramActual != undefined">Gramatica Actual: {{gramActual}}</label>    
 </div>
