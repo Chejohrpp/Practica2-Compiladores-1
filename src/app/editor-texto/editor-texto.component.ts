@@ -173,7 +173,6 @@ export class EditorTextoComponent  {
     let gramString = " {\n \"lex\":{\n  \"rules\" : [\n"+omitirEspacios +lexerGramar+"\n]\n},\n\"start\" : \""+this.symInicial+"\",\n \"bnf\":{\n"+producciones+"\n}\n}";
     console.log(gramString);
     let gramObjt = JSON.parse(gramString);
-    console.log(gramObjt);
     try {
       const Parser = require("jison").Parser;
       const parser = new Parser(gramObjt);

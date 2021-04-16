@@ -90,13 +90,31 @@ inicio
     ;
 
 inicio_sig
-    : '¿'  contenido '?' WISON
+    : signo_interrogacion  contenido fin_inicio
+        {
+
+        }
+
+    ;
+signo_interrogacion
+    : '¿'
         {
 
         }
     |error
         {
-            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
+        }
+    ;
+
+fin_inicio
+    : '?' WISON
+        {
+
+        }
+    |error
+        {
             arrayErrores.push('error en la linea ' + (this._$.first_line) +
             ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
@@ -110,13 +128,30 @@ contenido
     ; 
 
 lex
-    :LEX '{' ':' cont_lex ':' '}'
+    :ini_lex cont_lex  fin_lex
         {
-            $$ = $4;
+            /*$$ = $4;*/
+        }
+    ;
+ini_lex
+    : LEX '{' ':' 
+        {
+
         }
     |error
         {
-            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
+        }
+    ;
+
+fin_lex
+    : ':' '}'
+        {
+
+        }
+    |error '}'
+        {
             arrayErrores.push('error en la linea ' + (this._$.first_line) +
             ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
@@ -135,14 +170,44 @@ cont_lex
     ;
 
 only_terminal
-    : TERMINAL NOMBRE_TERMINAL '<' '-' expresion_lex ';'
+    : ini_only_terminal flecha_only_terminal expresion_lex semi_only_terminal
         {
-            var elemento = {'id': $2 ,'cont':$5};
+            var elemento = {'id': $1 ,'cont':$3};
             arrayTerminales.push(elemento);
+        }
+    ;
+
+semi_only_terminal
+    : ';'
+        {
+
         }
     |error
         {
-            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
+        }
+    ;
+
+ini_only_terminal
+    : TERMINAL NOMBRE_TERMINAL
+        {
+            $$ = $2;
+        }
+    |error
+        {
+             arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
+        }
+    ;
+
+flecha_only_terminal
+    : '<' '-'
+        {
+
+        }
+    |error
+        {
             arrayErrores.push('error en la linea ' + (this._$.first_line) +
             ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
@@ -352,13 +417,31 @@ clausula_expr
     ;
 
 syn 
-    : SYNTAX '{' '{' ':' cont_syn ':' '}' '}'
+    : ini_syn cont_syn fin_syn
         {
-            $$ = $5;
+            $$ = $2;
+        }
+    ;
+
+ini_syn
+    : SYNTAX '{' '{' ':'
+        {
+
         }
     |error
         {
-            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
+        }
+    ;
+
+fin_syn
+    : ':' '}' '}'
+        {
+
+        }
+    |error
+        {
             arrayErrores.push('error en la linea ' + (this._$.first_line) +
             ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
@@ -380,12 +463,6 @@ no_terminales
         {
 
         }
-    |error
-        {
-            console.log('error ' + yytext);
-            arrayErrores.push('error en la linea ' + (this._$.first_line) +
-            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
-        }
     ;
 
 no_terminal 
@@ -393,16 +470,31 @@ no_terminal
         {
             arrayNoTerminales.push($2);
         }
+    | error
+        {
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
+        }
     ;
 
 initial_prod
-    : INITIAL_SYM NOMBRE_PRODUCCION ';'
+    : INITIAL_SYM sig_initial_prod
         {
             symInicial = $2;
         }
-    |error
+    |error produccion
         {
-            console.log('error ' + yytext);
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
+        }
+    ;
+sig_initial_prod
+    : NOMBRE_PRODUCCION ';'
+        {
+            $$ = $1;
+        }
+    |error 
+        {
             arrayErrores.push('error en la linea ' + (this._$.first_line) +
             ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
@@ -419,16 +511,30 @@ producciones
         }
     ;
 produccion
-    : NOMBRE_PRODUCCION '<' '=' derivaciones ';'
+    : ini_produccion flecha_producion derivaciones ';'
         {
-            var produccion = $4;
+            var produccion = $3;
             var elemento = {'id': $1, 'cont': arrayDerivaciones };
             arrayProducciones.push(elemento);
             arrayDerivaciones = [];
         }
+    ;
+
+ini_produccion
+    : NOMBRE_PRODUCCION
+        {
+            $$ = yytext;
+        }
+        
+    ;
+
+flecha_producion
+    : '<' '='
+        {
+
+        }
     |error
         {
-            console.log('error ' + yytext);
             arrayErrores.push('error en la linea ' + (this._$.first_line) +
             ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
@@ -442,12 +548,6 @@ derivaciones
     |derivacion
         {
             $$ = $1;
-        }
-    |error
-        {
-            console.log('error ' + yytext);
-            arrayErrores.push('error en la linea ' + (this._$.first_line) +
-            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
     ;
 
@@ -467,6 +567,11 @@ derivacion
             arrayDerivaciones.push(yytext);
             $$ = yytext;
 
+        }
+    | error
+        {
+            arrayErrores.push('error en la linea ' + (this._$.first_line) +
+            ', columna ' + (this._$.first_column) + ' -> ' + yytext);
         }
     ;
     
